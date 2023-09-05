@@ -31,7 +31,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate Docker image tag with short sha
         id: dockertag
-        run: echo "img_tag=ghcr.io/${{ github.repository }}:$(git rev-parse --short HEAD)" >> ${GITHUB_OUTPUT}
+        run: echo "img_tag=ghcr.io/OleJorgenKnoph:$(git rev-parse --short HEAD)" >> ${GITHUB_OUTPUT}
       - name: Build and push
         id: build-push
         uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825 # ratchet:docker/build-push-action@v4
@@ -49,13 +49,12 @@ jobs:
         with:
           cosign-release: 'v2.2.0'  
       - name: Sign the container image
-        run: cosign sign --yes ttl.sh/${{ github.repository }}@${{ steps.build-push.outputs.digest }}  
+        run: cosign sign --yes ttl.sh/OleJorgenKnoph@${{ steps.build-push.outputs.digest }}  
       - name: Create SBOM
         uses: aquasecurity/trivy-action@e5f43133f6e8736992c9f3c1b3296e24b37e17f2 # ratchet:aquasecurity/trivy-action@master
         with:
           scan-type: 'image'
           format: 'cyclonedx'
           output: 'cyclone.sbom.json'
-          image-ref: ttl.sh/${{ github.repository }}@${{ steps.build-push.outputs.digest }} 
-      - name: Attest image
-        run: cosign attest --yes --predicate cyclone.sbom.json --type cyclonedx ttl.sh/${{ github.repository }}@${{ steps.build-push.outputs.digest }}     
+          image-ref: ttl.sh/OleJorgenKnoph@${{ steps.build-push.outputs.digest }} 
+           
